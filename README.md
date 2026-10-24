@@ -16,6 +16,8 @@ dufs /srv/files --assets /opt/dufs-theme -a admin:PASS@/:rw --allow-all
 
 `--assets` also works as `DUFS_ASSETS` or `assets:` in the dufs config. Hard-refresh (Ctrl+Shift+R) after changes.
 
+Don't want to clone? Download the zip from [Releases](../../releases) and point `--assets` at the unzipped folder.
+
 ## Develop
 
 - Theme: `assets/index.css` (colors are variables at the top; light palette is `:root[data-theme="light"]`).
@@ -30,6 +32,14 @@ scripts/update.sh --apply      # apply it: new index.js/favicon, rebuilt index.h
 ```
 
 Pass a tag (`scripts/update.sh v0.48.0`) to pick a version. It only uses release tags: `main` can be ahead of the binary and expect server fields it doesn't send. After applying, read the diff for renamed classes that `index.css` or `custom.js` use, then try it with a local `dufs --assets assets`. On Windows run the scripts with `bash scripts/...` (Git Bash).
+
+## Release
+
+```bash
+git tag v0.1.0 && git push origin v0.1.0
+```
+
+The [release workflow](.github/workflows/release.yml) zips `assets/` and publishes a GitHub release with generated notes.
 
 ## License
 
