@@ -1,0 +1,639 @@
+/*
+ * dufs theme, modelled on Termix (https://github.com/Termix-SSH/Termix).
+ * Tokens come from Termix's dark palette: near-black with a faint green tint,
+ * translucent white borders, JetBrains Mono, and the #f59145 brand orange.
+ * CSS only: index.js is an untouched upstream file; index.html only gains the
+ * lines that load theme-init.js, custom.css and custom.js.
+ */
+
+@font-face {
+  font-family: "JetBrains Mono";
+  src: url("JetBrainsMono-400.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "JetBrains Mono";
+  src: url("JetBrainsMono-700.woff2") format("woff2");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  color-scheme: dark;
+
+  --accent-brand: #f59145;
+  --accent-brand-soft: rgb(245 145 69 / 14%);
+  --radius: 0.625rem;
+  --radius-sm: 0.4rem;
+
+  /* dark palette (default) */
+  --background: oklch(0.155 0.004 128.73);
+  --surface: oklch(0.185 0.004 128.73);
+  --surface-dim: oklch(0.165 0.003 128.73);
+  --card: oklch(0.21 0.004 128.68);
+  --muted: oklch(0.255 0 0);
+  --foreground: oklch(0.985 0 0);
+  --muted-foreground: oklch(0.72 0 0);
+  --subtle-foreground: oklch(0.56 0 0);
+  --destructive: oklch(0.704 0.191 22.216);
+  --border: oklch(1 0 0 / 12%);
+  --input: oklch(1 0 0 / 15%);
+  --ring: var(--accent-brand);
+  --accent-text: var(--accent-brand);
+  --row-border: oklch(1 0 0 / 6%);
+  --row-hover: oklch(1 0 0 / 5%);
+  --scrollbar: oklch(1 0 0 / 20%);
+  --scrollbar-hover: oklch(1 0 0 / 35%);
+
+  /* names used by the stock dufs markup/JS */
+  --bg-primary: var(--background);
+  --bg-secondary: var(--surface);
+  --bg-tertiary: var(--surface);
+  --bg-hover: var(--row-hover);
+  --text-primary: var(--foreground);
+  --text-secondary: var(--muted-foreground);
+  --text-tertiary: var(--subtle-foreground);
+  --text-accent: var(--foreground);
+  --svg-primary: var(--muted-foreground);
+  --svg-secondary: var(--subtle-foreground);
+  --svg-tertiary: var(--muted-foreground);
+  --border-primary: var(--border);
+  --border-secondary: var(--input);
+}
+
+/* light palette: Termix's light tokens. Set by theme-init.js / the toggle button. */
+:root[data-theme="light"] {
+  color-scheme: light;
+
+  --background: oklch(1 0 0);
+  --surface: oklch(0.985 0 0);
+  --surface-dim: oklch(0.97 0 0);
+  --card: oklch(1 0 0);
+  --muted: oklch(0.95 0 0);
+  --foreground: oklch(0.1802 0.0043 128.73);
+  --muted-foreground: oklch(0.44 0 0);
+  --subtle-foreground: oklch(0.52 0 0);
+  --destructive: oklch(0.577 0.245 27.325);
+  --border: oklch(0.922 0 0);
+  --input: oklch(0.87 0 0);
+  --accent-text: oklch(0.55 0.16 50);
+  --accent-brand-soft: rgb(245 145 69 / 18%);
+  --row-border: oklch(0.95 0 0);
+  --row-hover: oklch(0 0 0 / 4%);
+  --scrollbar: oklch(0 0 0 / 20%);
+  --scrollbar-hover: oklch(0 0 0 / 35%);
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--scrollbar) transparent;
+}
+
+*::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+*::-webkit-scrollbar-track,
+*::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+  background: var(--scrollbar);
+  border-radius: 3px;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background: var(--scrollbar-hover);
+}
+
+::selection {
+  background: rgb(245 145 69 / 35%);
+}
+
+:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+
+html {
+  font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--text-primary);
+  background-color: var(--bg-primary);
+}
+
+body {
+  /* stock dufs uses 538px to avoid early breadcrumb wrapping; the head wraps cleanly here */
+  min-width: 320px;
+  margin: 0;
+  background-color: var(--bg-primary);
+}
+
+svg {
+  fill: var(--svg-primary);
+}
+
+a {
+  transition: color 110ms, background-color 110ms;
+}
+
+.hidden {
+  display: none !important;
+}
+
+/* ---------- top bar ---------- */
+
+.head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5em 0.75em;
+  padding: 0.7em 1.25em;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background-color: var(--bg-tertiary);
+  border-bottom: 1px solid var(--border);
+}
+
+.breadcrumb {
+  font-size: 1.05em;
+  padding-right: 0.4em;
+  word-break: break-all;
+}
+
+.breadcrumb>a {
+  color: var(--muted-foreground);
+  text-decoration: none;
+  padding: 0.1em 0.3em;
+  border-radius: var(--radius-sm);
+}
+
+.breadcrumb>a:hover {
+  color: var(--accent-text);
+  background: var(--accent-brand-soft);
+  text-decoration: none;
+}
+
+/* final breadcrumb */
+.breadcrumb>b {
+  color: var(--text-primary);
+  font-weight: 700;
+  padding: 0.1em 0.3em;
+}
+
+.breadcrumb>.separator {
+  color: var(--subtle-foreground);
+  padding: 0 0.1em;
+}
+
+.breadcrumb svg {
+  height: 100%;
+  fill: var(--accent-brand);
+}
+
+/* ---------- toolbox ---------- */
+
+.toolbox {
+  display: flex;
+  gap: 0.25em;
+  margin-right: 0;
+}
+
+.toolbox>a,
+.toolbox>div,
+.toolbox-right>div {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  height: 30px;
+  min-width: 30px;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  transition: background-color 110ms, border-color 110ms;
+}
+
+.toolbox>a:hover,
+.toolbox>div:hover,
+.toolbox-right>div:hover {
+  background: var(--muted);
+  border-color: var(--border);
+}
+
+.toolbox>a:hover svg,
+.toolbox>div:hover svg,
+.toolbox-right>div:hover svg {
+  fill: var(--accent-brand);
+}
+
+.toolbox .control {
+  cursor: pointer;
+  padding-left: 0;
+}
+
+.toolbox .control label {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+}
+
+.upload-file input {
+  display: none;
+}
+
+.upload-file label {
+  cursor: pointer;
+}
+
+/* ---------- search ---------- */
+
+.searchbar {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  width: 260px;
+  max-width: 100%;
+  height: 32px;
+  box-sizing: border-box;
+  background-color: var(--surface-dim);
+  transition: border-color 150ms, box-shadow 150ms;
+  border: 1px var(--input) solid;
+  border-radius: var(--radius-sm);
+  margin-bottom: 0;
+}
+
+.searchbar:focus-within {
+  border-color: var(--accent-brand);
+  box-shadow: 0 0 0 3px var(--accent-brand-soft);
+}
+
+.searchbar #search {
+  box-sizing: border-box;
+  width: 100%;
+  height: 100%;
+  font-family: inherit;
+  font-size: 0.9em;
+  line-height: 16px;
+  padding: 1px 8px 1px 2px;
+  color: var(--text-primary);
+  background-color: transparent;
+  border: none;
+  outline: none;
+}
+
+.searchbar #search:focus-visible {
+  outline: none;
+}
+
+.searchbar .icon {
+  display: flex;
+  align-items: center;
+  color: var(--svg-tertiary);
+  padding: 0 4px 0 9px;
+  cursor: pointer;
+}
+
+.searchbar svg {
+  fill: var(--svg-tertiary);
+}
+
+.toolbox-right {
+  display: flex;
+  gap: 0.25em;
+  margin-left: auto;
+  margin-right: 0;
+}
+
+.login-btn,
+.save-btn,
+.logout-btn {
+  cursor: pointer;
+}
+
+.login-btn,
+.logout-btn {
+  padding: 0 0.6em;
+}
+
+.save-btn {
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.logout-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.4em;
+}
+
+.user-name {
+  padding-left: 0;
+  font-size: 0.9em;
+  color: var(--muted-foreground);
+}
+
+/* ---------- main ---------- */
+
+.main {
+  padding: 1em 1.25em 2em;
+}
+
+.empty-folder,
+.not-editable {
+  font-style: normal;
+  color: var(--muted-foreground);
+  border: 1px dashed var(--input);
+  border-radius: var(--radius);
+  padding: 2.5em 1em;
+  text-align: center;
+}
+
+/* ---------- tables ---------- */
+
+.uploaders-table,
+.paths-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.uploaders-table th,
+.paths-table th {
+  text-align: left;
+  font-weight: 400;
+  font-size: 0.78em;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--subtle-foreground);
+  white-space: nowrap;
+  padding: 0.5em 0.5em;
+  border-bottom: 1px solid var(--border);
+}
+
+.uploaders-table td,
+.paths-table td {
+  white-space: nowrap;
+  padding: 0.4em 0.5em;
+}
+
+.paths-table tbody tr {
+  border-bottom: 1px solid var(--row-border);
+}
+
+.paths-table thead a {
+  color: unset;
+  text-decoration: none;
+}
+
+.paths-table thead a:hover {
+  color: var(--foreground);
+}
+
+.paths-table thead a>span {
+  padding-left: 4px;
+}
+
+.paths-table thead a>span svg {
+  fill: var(--accent-brand);
+}
+
+.paths-table tbody tr {
+  transition: background-color 110ms;
+}
+
+.paths-table tbody tr:hover {
+  background-color: var(--bg-hover);
+}
+
+.paths-table tbody tr:hover .path a {
+  color: var(--accent-text);
+}
+
+.paths-table .cell-actions {
+  width: 110px;
+  display: flex;
+  align-items: center;
+  gap: 0.15em;
+  padding-left: 0.5em;
+}
+
+.paths-table thead .cell-actions {
+  display: table-cell;
+}
+
+.paths-table .cell-mtime {
+  width: 140px;
+  padding-left: 0.5em;
+  color: var(--muted-foreground);
+  font-variant-numeric: tabular-nums;
+}
+
+.paths-table .cell-size {
+  text-align: right;
+  width: 80px;
+  padding-left: 0.5em;
+  color: var(--muted-foreground);
+  font-variant-numeric: tabular-nums;
+}
+
+.path svg {
+  height: 16px;
+  fill: var(--svg-secondary);
+  padding-right: 0.5em;
+  vertical-align: text-top;
+}
+
+/* folder icons (14px wide in upstream's icon set) get the brand color */
+.path svg[width="14"] {
+  fill: var(--accent-brand);
+}
+
+.path {
+  list-style: none;
+}
+
+.path a {
+  color: var(--text-primary);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+  display: block;
+  text-decoration: none;
+  max-width: calc(100vw - 420px);
+  min-width: 120px;
+}
+
+.path a:hover {
+  text-decoration: none;
+}
+
+.paths-table .cell-icon {
+  width: 1px;
+  padding-right: 0;
+}
+
+/* ---------- row actions ---------- */
+
+.action-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  padding: 0;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: background-color 110ms;
+}
+
+.action-btn svg {
+  padding: 0;
+  height: 16px;
+  width: 16px;
+}
+
+.action-btn a,
+.action-btn .dlwt {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+}
+
+.action-btn:hover {
+  background: var(--muted);
+}
+
+.action-btn:hover svg {
+  fill: var(--accent-brand);
+}
+
+.action-btn[id^="deleteBtn"]:hover svg {
+  fill: var(--destructive);
+}
+
+.action-btn.disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.action-btn.disabled:hover {
+  background: transparent;
+}
+
+.action-btn.disabled:hover svg {
+  fill: var(--svg-primary);
+}
+
+/* ---------- uploads ---------- */
+
+.uploaders-table {
+  margin-bottom: 1em;
+}
+
+.uploaders-table .cell-status {
+  padding-left: 0.6em;
+}
+
+.uploaders-table .cell-status span {
+  display: inline-block;
+}
+
+.uploaders-table .cell-size,
+.uploaders-table .cell-percent,
+.uploaders-table .cell-speed,
+.uploaders-table .cell-eta {
+  text-align: right;
+  padding-left: 0.6em;
+  font-variant-numeric: tabular-nums;
+  color: var(--muted-foreground);
+}
+
+.uploaders-table .cell-percent {
+  color: var(--accent-text);
+}
+
+.uploader {
+  padding-right: 1em;
+}
+
+.retry-btn {
+  cursor: pointer;
+  color: var(--accent-text);
+}
+
+/* ---------- editor ---------- */
+
+.editor {
+  box-sizing: border-box;
+  width: 100%;
+  height: calc(100vh - 6.5rem);
+  border: 1px solid var(--input);
+  border-radius: var(--radius);
+  background: var(--surface-dim);
+  color: var(--text-primary);
+  font-family: inherit;
+  font-size: 0.95em;
+  line-height: 1.6;
+  outline: none;
+  padding: 0.9em 1em;
+  resize: none;
+}
+
+.editor:focus {
+  border-color: var(--accent-brand);
+  box-shadow: 0 0 0 3px var(--accent-brand-soft);
+}
+
+/* ---------- small screens ---------- */
+
+@media (max-width: 767px) {
+  .head {
+    padding: 0.6em 0.9em;
+  }
+
+  .main {
+    padding: 0.75em 0.9em 2em;
+  }
+
+  .searchbar {
+    width: 100%;
+    order: 3;
+  }
+
+  .paths-table .cell-mtime {
+    display: none;
+  }
+
+  .path a {
+    max-width: calc(100vw - 290px);
+    min-width: 0;
+  }
+
+  .paths-table .cell-size {
+    width: 70px;
+  }
+
+  .paths-table th,
+  .paths-table td {
+    padding-left: 0.3em;
+    padding-right: 0.3em;
+  }
+}
+
+@media (min-width: 768px) {
+  .path a {
+    min-width: 320px;
+  }
+}

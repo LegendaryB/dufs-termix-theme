@@ -1,0 +1,9 @@
+# Claude Code local session settings
+.claude/
+
+# OS / editor noise
+.DS_Store
+Thumbs.db
+desktop.ini
+.vscode/
+.idea/
