@@ -7,6 +7,9 @@
 (function () {
   "use strict";
 
+  // Only set while the script is executing; used to find files next to it.
+  const scriptUrl = document.currentScript && document.currentScript.src;
+
   /**
    * Add an icon button to the top bar, styled like the built-in ones.
    * @param {object} opts
@@ -56,4 +59,53 @@
   }
 
   syncThemeBtn();
+
+  /** Format bytes like the file list does (1024-based). */
+  function formatSize(bytes) {
+    const units = ["B", "KB", "MB", "GB", "TB", "PB"];
+    let i = 0;
+    while (bytes >= 1024 && i < units.length - 1) {
+      bytes /= 1024;
+      i++;
+    }
+    return `${bytes.toFixed(i === 0 ? 0 : 1)} ${units[i]}`;
+  }
+
+  /**
+   * Show free disk space in the top bar. The numbers come from disk.json, which
+   * scripts/disk-usage.sh writes next to this file on the server. Without that
+   * file the indicator simply stays hidden.
+   */
+  async function showDiskUsage() {
+    const $right = document.querySelector(".toolbox-right");
+    if (!$right || !scriptUrl) return;
+    try {
+      const res = await fetch(new URL("disk.json", scriptUrl), { cache: "no-store" });
+      if (!res.ok) return;
+      const d = await res.json();
+      if (!(d.size > 0) || !(d.free >= 0)) return;
+
+      const used = d.used >= 0 ? d.used : d.size - d.free;
+      const usedPct = Math.min(100, Math.round((used / (used + d.free)) * 100));
+
+      const $el = document.createElement("span");
+      $el.className = "disk-usage" + (usedPct >= 90 ? " low" : "");
+      $el.title = `${formatSize(d.free)} free of ${formatSize(d.size)} (${usedPct}% used)`;
+
+      const $label = document.createElement("span");
+      $label.className = "disk-label";
+      $label.textContent = `${formatSize(d.free)} free`;
+
+      const $bar = document.createElement("span");
+      $bar.className = "disk-bar";
+      const $fill = document.createElement("span");
+      $fill.style.width = `${usedPct}%`;
+      $bar.appendChild($fill);
+
+      $el.append($label, $bar);
+      $right.prepend($el);
+    } catch (e) { /* no disk.json or bad data: leave the indicator out */ }
+  }
+
+  showDiskUsage();
 })();

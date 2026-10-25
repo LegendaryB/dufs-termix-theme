@@ -3,3 +3,45 @@
  * index.css; buttons made with addToolboxButton() already pick up the toolbox
  * styling there, so this file is only for extra elements.
  */
+
+/* free disk space indicator (custom.js + scripts/disk-usage.sh) */
+.disk-usage {
+  display: flex;
+  align-items: center;
+  gap: 0.6em;
+  margin-right: 0.5em;
+  font-size: 0.85em;
+  color: var(--muted-foreground);
+  white-space: nowrap;
+  cursor: default;
+}
+
+.disk-bar {
+  width: 64px;
+  height: 6px;
+  border-radius: 3px;
+  background: var(--input);
+  overflow: hidden;
+}
+
+.disk-bar > span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--accent-brand);
+}
+
+/* 90% full or more */
+.disk-usage.low .disk-label {
+  color: var(--destructive);
+}
+
+.disk-usage.low .disk-bar > span {
+  background: var(--destructive);
+}
+
+@media (max-width: 767px) {
+  .disk-label {
+    display: none;
+  }
+}

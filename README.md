@@ -24,6 +24,18 @@ Don't want to clone? Download the zip from [Releases](../../releases) and point 
 - Your own UI: `assets/custom.js` / `custom.css`. `dufsTheme.addToolboxButton({ id, title, icon, onClick })` adds a themed top-bar button; the theme toggle is the example.
 - Keep `index.js` and `favicon.ico` stock. `index.html` is stock plus three lines that load `theme-init.js`, `custom.css` and `custom.js`.
 
+## Free disk space (optional)
+
+dufs doesn't expose disk space, so a small script on the server writes it to `disk.json` and the theme shows it in the top bar (turns red at 90% full):
+
+```bash
+scp scripts/disk-usage.sh user@your-vps:/opt/dufs-theme/
+# crontab on the server, every minute:
+* * * * * /opt/dufs-theme/disk-usage.sh /srv/files /opt/dufs-theme
+```
+
+Arguments: the folder dufs serves, and the deployed assets folder. Without `disk.json` nothing is shown (the browser console logs a harmless 404). Note that dufs serves assets without a login, so the totals are visible to anyone who can reach your dufs.
+
 ## Update dufs
 
 ```bash
